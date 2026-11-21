@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estrategia · OLD-LND 2026</title>
+    <meta
+      name="description"
+      content="Kit de Comunicación LND para estudiantes y Escaparate de Talento para empresas que buscan vincularse con perfiles de Negocios Digitales."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="estrategia">
+    <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+
+    <div class="app-shell">
+      <div id="site-header"></div>
+
+      <main id="contenido-principal">
+        <section class="section strategy" id="estrategia">
+          <div class="section-heading center">
+            <span class="eyebrow">Fase 04 · Activación</span>
+            <h1>Una estrategia, dos puntos de encuentro</h1>
+            <p>
+              Preparamos al talento para comunicar su valor y facilitamos a las empresas encontrarlo.
+            </p>
+          </div>
+
+          <div class="strategy-grid">
+            <article class="kit-panel">
+              <div class="panel-badge">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m2 10 10-5 10 5-10 5Z" />
+                  <path d="M6 12.5V17c3 2.5 9 2.5 12 0v-4.5M22 10v6" />
+                </svg>
+                Para estudiantes
+              </div>
+              <h3>Kit de Comunicación LND</h3>
+              <p>
+                Recursos prácticos para convertir competencias en una narrativa profesional clara,
+                auténtica y relevante.
+              </p>
+
+              <div class="resource-list">
+                <button type="button" class="resource-btn" data-resource="Plantilla de narrativa profesional">
+                  <span class="file-icon" aria-hidden="true">01</span>
+                  <span>
+                    <strong>Plantilla de narrativa profesional</strong>
+                    <small>Guía editable · 12 páginas</small>
+                  </span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" />
+                  </svg>
+                </button>
+
+                <button type="button" class="resource-btn" data-resource="Canvas de propuesta de valor">
+                  <span class="file-icon" aria-hidden="true">02</span>
+                  <span>
+                    <strong>Canvas de propuesta de valor</strong>
+                    <small>Herramienta de trabajo</small>
+                  </span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" />
+                  </svg>
+                </button>
+
+                <button type="button" class="resource-btn" data-resource="Pitch de talento en 90 segundos">
+                  <span class="file-icon" aria-hidden="true">03</span>
+                  <span>
+                    <strong>Pitch de talento en 90 segundos</strong>
+                    <small>Guion + ejemplos</small>
+                  </span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" />
+                  </svg>
+                </button>
+              </div>
+
+              <button type="button" class="button button-primary kit-button" data-resource="Kit completo de Comunicación LND">
+                Descargar kit completo
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" />
+                </svg>
+              </button>
+              <p class="kit-feedback" id="kit-feedback" role="status" aria-live="polite"></p>
+            </article>
+
+            <article class="talent-panel" id="contacto">
+              <div class="panel-badge dark">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17M16 9h3a1 1 0 0 1 1 1v11M8 7h4M8 11h4M8 15h4M7 21h10" />
+                </svg>
+                Para empresas
+              </div>
+              <h3>Escaparate de Talento</h3>
+              <p>
+                Cuéntanos qué reto quieres resolver y te conectaremos con perfiles LND afines a tu
+                sector.
+              </p>
+
+              <form id="contact-form" novalidate>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="nombre">Nombre completo</label>
+                    <input id="nombre" name="nombre" type="text" required placeholder="Tu nombre" autocomplete="name" />
+                  </div>
+                  <div class="field">
+                    <label for="empresa">Empresa</label>
+                    <input id="empresa" name="empresa" type="text" required placeholder="Nombre de la empresa" autocomplete="organization" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="correo">Correo corporativo</label>
+                  <input id="correo" name="correo" type="email" required placeholder="nombre@empresa.com" autocomplete="email" />
+                </div>
+                <div class="field">
+                  <label for="sector">Sector de interés</label>
+                  <select id="sector" name="sector" required>
+                    <option value="" disabled selected>Selecciona un sector</option>
+                    <option value="Diseño de sistemas de cómputo y servicios relacionados">Diseño de sistemas de cómputo y servicios relacionados</option>
+                    <option value="Comercio al por menor de telas">Comercio al por menor de telas</option>
+                    <option value="Provisión de infraestructura de cómputo y procesamiento">Provisión de infraestructura de cómputo y procesamiento</option>
+                    <option value="Servicios de consultoría en administración">Servicios de consultoría en administración</option>
+                    <option value="Comercio al por menor de cosméticos y perfumería">Comercio al por menor de cosméticos y perfumería</option>
+                  </select>
+                </div>
+                <p id="form-error" class="form-error" role="alert" hidden></p>
+                <button class="button submit-button" type="submit">
+                  Conectar con talento
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                  </svg>
+                </button>
+                <small class="privacy">
+                  Al enviar aceptas que te contactemos para dar seguimiento.
+                </small>
+              </form>
+
+              <div id="form-success" class="success-message" role="status" aria-live="polite" hidden>
+                <span aria-hidden="true">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m5 12 4 4L19 6" />
+                  </svg>
+                </span>
+                <h4>Solicitud recibida</h4>
+                <p>
+                  Gracias por apostar por el talento LND. Nuestro equipo dará seguimiento a tu
+                  solicitud.
+                </p>
+                <button type="button" id="reset-form">Enviar otra solicitud</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <div id="site-footer"></div>
+    </div>
+
+    <script src="./layout.js" defer></script>
+    <script src="./script.js" defer></script>
+  </body>
+</html>

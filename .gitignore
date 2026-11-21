@@ -1,0 +1,22 @@
+# Agentes y personalizaciones locales de IA
+.agents/
+.agent/
+_agents/
+_agent/
+
+# Archivos de datos y hojas de cálculo locales
+*.xlsx
+*.xls
+*.csv
+BASE_MAESTRA_CONSOLIDADA_185_VACANTES.xlsx
+
+# Archivos de sistema operativo y temporales
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*~
+
+# Configuraciones de editor
+.vscode/
+.idea/
