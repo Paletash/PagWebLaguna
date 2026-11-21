@@ -515,12 +515,15 @@
   form?.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!form.checkValidity()) {
+      const firstInvalid = form.querySelector(":invalid");
       if (formError) {
         formError.textContent =
-          "Por favor completa todos los campos requeridos con un correo válido.";
+          firstInvalid?.id === "acepto-privacidad"
+            ? "Debes aceptar el Aviso de Privacidad y los Términos de Uso para enviar tu solicitud."
+            : "Por favor completa todos los campos requeridos con un correo válido.";
         formError.hidden = false;
       }
-      form.querySelector(":invalid")?.focus();
+      firstInvalid?.focus();
       return;
     }
 
