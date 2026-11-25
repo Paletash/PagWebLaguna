@@ -1,0 +1,50 @@
+# =========================================================================
+# Reglas de Cabeceras HTTP de Seguridad para Cloudflare Pages / Netlify
+# Proyecto: OLD-LND 2026 (Observatorio Laboral Digital)
+# =========================================================================
+
+/*
+  # Forzar navegación segura HTTPS por 1 año e incluir subdominios
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # Prevenir que la página sea embebida en iframes externos (Anticlickjacking)
+  X-Frame-Options: DENY
+
+  # Bloquear sniffing de tipos MIME (previene ejecución de archivos disfrazados)
+  X-Content-Type-Options: nosniff
+
+  # Control de referrer para proteger URLs y parámetros al salir del sitio
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Desactivar acceso a hardware y APIs no requeridas por el observatorio
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), encrypted-media=(), display-capture=(), geolocation=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()
+
+  # Content Security Policy (CSP) adaptada a Google Fonts y formulario FormSubmit
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co mailto:; frame-ancestors 'none'; object-src 'none'; base-uri 'self';
+
+  # Protección legacy para navegadores antiguos
+  X-XSS-Protection: 1; mode=block
+
+# Control de caché para documentos HTML (permite ver cambios de despliegue al instante)
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Control de caché para recursos estáticos CSS y JS
+/*.css
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.js
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Control de caché para imágenes y vectores
+/*.svg
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/*.webp
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/*.png
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
