@@ -507,12 +507,34 @@
     });
   }
 
+  const CONTACT_EMAIL = "old.lnd.sto@gmail.com";
+  const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`;
+
   const form = document.getElementById("contact-form");
   const formError = document.getElementById("form-error");
   const formSuccess = document.getElementById("form-success");
   const resetBtn = document.getElementById("reset-form");
+  const submitBtn = document.getElementById("submit-btn");
+  const submitBtnText = submitBtn?.querySelector(".submit-btn-text");
 
-  form?.addEventListener("submit", (event) => {
+  function buildMailtoHref({ nombre, empresa, correo, sector, mensaje }) {
+    const subject = `Vinculación OLD-LND 2026 — ${empresa}`;
+    const body = [
+      "Hola equipo OLD-LND 2026,",
+      "",
+      "Me gustaría vincular talento de la Licenciatura en Negocios Digitales con nuestra organización:",
+      `- Nombre: ${nombre}`,
+      `- Empresa: ${empresa}`,
+      `- Correo corporativo: ${correo}`,
+      `- Sector de interés: ${sector}`,
+      `- Reto o perfil buscado: ${mensaje || "No especificado"}`,
+      "",
+      "Enviado desde el Escaparate de Talento OLD-LND 2026.",
+    ].join("\n");
+    return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!form.checkValidity()) {
       const firstInvalid = form.querySelector(":invalid");
@@ -527,13 +549,62 @@
       return;
     }
 
+    const nombre = form.querySelector("#nombre")?.value.trim() || "";
+    const empresa = form.querySelector("#empresa")?.value.trim() || "";
+    const correo = form.querySelector("#correo")?.value.trim() || "";
+    const sector = form.querySelector("#sector")?.value || "";
+    const mensaje = form.querySelector("#mensaje")?.value.trim() || "";
+    const honey = form.querySelector('input[name="_honey"]')?.value || "";
+
+    if (honey) return;
+
     if (formError) formError.hidden = true;
-    form.hidden = true;
-    if (formSuccess) formSuccess.hidden = false;
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitBtnText) submitBtnText.textContent = "Enviando solicitud...";
+
+    const payload = {
+      Nombre: nombre,
+      Empresa: empresa,
+      "Correo corporativo": correo,
+      _replyto: correo,
+      "Sector de interés": sector,
+      "Reto o perfil buscado": mensaje || "No especificado",
+      _subject: `Vinculación OLD-LND 2026 — ${empresa} (${sector})`,
+      _template: "table",
+      _captcha: "false",
+    };
+
+    try {
+      const response = await fetch(FORMSUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      form.hidden = true;
+      if (formSuccess) formSuccess.hidden = false;
+    } catch {
+      const mailtoUrl = buildMailtoHref({ nombre, empresa, correo, sector, mensaje });
+      if (formError) {
+        formError.innerHTML = `No se pudo enviar automáticamente desde esta conexión. Puedes enviarlo directamente a <a href="${mailtoUrl}" class="error-mailto-link">${CONTACT_EMAIL}</a> con tus datos precargados.`;
+        formError.hidden = false;
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitBtnText) submitBtnText.textContent = "Conectar con talento";
+    }
   });
 
   resetBtn?.addEventListener("click", () => {
     form?.reset();
+    if (formError) formError.hidden = true;
     if (formSuccess) formSuccess.hidden = true;
     if (form) {
       form.hidden = false;
