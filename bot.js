@@ -267,7 +267,6 @@
           <img src="./img/LogoActualWebp.webp" alt="" class="lnd-bot-avatar" width="30" height="30" />
           <div>
             <strong>Guía OLD-LND 2026</strong>
-            <small>Bot lógico · Base N=185</small>
           </div>
         </div>
         <div class="lnd-bot-header-actions">
