@@ -107,7 +107,7 @@
       ],
     },
     datos: {
-      text: "Resumen ejecutivo de la **Base Maestra 2026 (N = 185 vacantes, 179 únicas)**:\n• Salario promedio global: **$35,947 MXN**\n• Clúster mejor pagado: **Producto Digital y UX/CRO ($47,792 MXN)** seguido de **IA y Ciencia de Datos ($43,875 MXN)**\n• Modalidad más frecuente: **Híbrida (38.4%)**, mientras que **Remota** promedia **$41,080 MXN**.",
+      text: "Resumen ejecutivo de la **Base de datos 2026 (N = 185 vacantes)**:\n• Salario promedio global: **$35,947 MXN**\n• Clúster mejor pagado: **Producto Digital y UX/CRO ($47,792 MXN)** seguido de **IA y Ciencia de Datos ($43,875 MXN)**\n• Modalidad más frecuente: **Híbrida (38.4%)**, mientras que **Remota** promedia **$41,080 MXN**.",
       links: [
         { label: "Ver Resultados 2026", href: "./resultados.html" },
         { label: "Ver Metodología", href: "./metodologia.html" },
@@ -737,8 +737,8 @@
         const linksHtml =
           Array.isArray(msg.links) && msg.links.length > 0
             ? `<div class="lnd-msg-links">${msg.links
-                .map((l) => `<a href="${l.href}">${formatBotHtml(l.label)} →</a>`)
-                .join("")}</div>`
+              .map((l) => `<a href="${l.href}">${formatBotHtml(l.label)} →</a>`)
+              .join("")}</div>`
             : "";
         return `
           <div class="lnd-msg lnd-msg-bot">
