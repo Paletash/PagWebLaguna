@@ -3,8 +3,9 @@
 
   if (document.getElementById("lnd-bot-root")) return;
 
-  const STORAGE_KEY = "old_lnd_bot_state_v1";
+  const STORAGE_KEY = "old_lnd_bot_state_v2";
   const CONTACT_EMAIL = "old.lnd.sto@gmail.com";
+  const MAX_HISTORY = 40;
 
   /* =========================================================
      ÁRBOL DE DECISIÓN Y CONOCIMIENTO EMPÍRICO (N = 185)
@@ -49,12 +50,38 @@
 
   const NODES = {
     inicio: {
-      text: "¡Hola! Soy el asistente lógico de **OLD-LND 2026**. Te ayudo a explorar los hallazgos de **185 vacantes reales** o ir directo a las herramientas del Kit. ¿Cuál es tu perfil?",
+      text: "¡Hola! Soy el asistente lógico de **OLD-LND 2026**. Te ayudo a conocer la carrera de Negocios Digitales, explorar hallazgos de **185 vacantes reales** o usar las herramientas del Kit. ¿Qué te gustaría hacer?",
       options: [
+        { label: "¿Qué es la carrera LND?", next: "que_es_lnd" },
         { label: "Soy Estudiante LND", next: "estudiante" },
         { label: "Soy Empresa / Reclutador", next: "empresa" },
         { label: "Encontrar mi sector ideal", next: "quiz_1" },
         { label: "Datos y Salarios 2026", next: "datos" },
+      ],
+    },
+    que_es_lnd: {
+      text: "La **Licenciatura en Negocios Digitales (LND)** forma perfiles híbridos capaces de unir **estrategia comercial**, **analítica de datos** y **tecnología aplicada**.\n\nA diferencia de carreras puramente administrativas o de programación aislada, un egresado LND traduce necesidades de negocio en soluciones digitales medibles en áreas como:\n• Producto Digital y UX/CRO\n• Analítica BI, SQL e IA Aplicada\n• E-commerce, Retail Media, Growth y CRM\n• Transformación Digital y Gestión Ágil",
+      links: [
+        { label: "Explorar competencias demandadas", href: "./competencias.html" },
+        { label: "Ver los 5 sectores donde trabajamos", href: "./sectores.html" },
+      ],
+      options: [
+        { label: "¿Qué es este Observatorio?", next: "que_es_old" },
+        { label: "Datos y Salarios 2026", next: "datos" },
+        { label: "Encontrar sector afín", next: "quiz_1" },
+        { label: "Menú principal", next: "inicio" },
+      ],
+    },
+    que_es_old: {
+      text: "**OLD-LND 2026** (Observatorio Laboral Digital) es una investigación aplicada desarrollada por estudiantes de LND (Equipo 6).\n\nAnalizamos **185 vacantes reales** en 5 sectores SCIAN de México para cerrar la brecha entre lo que las empresas piden y cómo los estudiantes comunican sus competencias.",
+      links: [
+        { label: "Conocer la Metodología", href: "./metodologia.html" },
+        { label: "Ver Resultados 2026", href: "./resultados.html" },
+      ],
+      options: [
+        { label: "¿Qué es la carrera LND?", next: "que_es_lnd" },
+        { label: "Ver Kit de Comunicación", next: "kit_info" },
+        { label: "Menú principal", next: "inicio" },
       ],
     },
     estudiante: {
@@ -165,49 +192,266 @@
   };
 
   /* =========================================================
-     MOTOR DE PALABRAS CLAVE (NLP LIGERO SIN BACKEND)
+     MOTOR LÓGICO BLINDADO (TOKENIZACIÓN + PESOS + DESAMBIGUACIÓN)
      ========================================================= */
+  const STOPWORDS = new Set([
+    "de", "la", "el", "en", "y", "o", "a", "para", "por", "con", "soy", "me",
+    "mi", "mis", "que", "es", "una", "un", "unos", "unas", "los", "las", "pero",
+    "saber", "esta", "este", "esto", "ese", "esa", "sobre", "como", "del", "al",
+    "se", "su", "sus", "nos", "te", "lo", "mas", "muy", "puedo", "quiero",
+    "gustaria", "hola", "buenas", "tengo", "hacen", "hace",
+  ]);
+
+  const OUT_OF_SCOPE_TOKENS = new Set([
+    "clima", "lluvia", "temperatura", "futbol", "partido", "receta", "cocina",
+    "chiste", "broma", "musica", "cancion", "pelicula", "serie", "horoscopo",
+    "chatgpt", "openai", "dolar", "bitcoin", "crypto", "novia", "novio",
+    "videojuego", "fortnite", "minecraft", "tacos", "comida",
+  ]);
+
   const INTENTS = [
     {
+      node: "que_es_lnd",
+      label: "¿Qué es la carrera LND?",
+      phrases: [
+        { text: "otra carrera", weight: 6 },
+        { text: "esta carrera", weight: 6 },
+        { text: "que es lnd", weight: 6 },
+        { text: "negocios digitales", weight: 5 },
+        { text: "de que trata", weight: 5 },
+        { text: "que estudian", weight: 5 },
+        { text: "que hace un", weight: 4 },
+      ],
+      words: [
+        { text: "carrera", weight: 4 },
+        { text: "licenciatura", weight: 4 },
+        { text: "lnd", weight: 3 },
+        { text: "perfil", weight: 3 },
+        { text: "materias", weight: 3 },
+        { text: "egresado", weight: 3 },
+        { text: "estudian", weight: 3 },
+        { text: "estudia", weight: 3 },
+        { text: "trata", weight: 2 },
+      ],
+    },
+    {
+      node: "que_es_old",
+      label: "¿Qué es OLD-LND 2026?",
+      phrases: [
+        { text: "que es old", weight: 6 },
+        { text: "observatorio laboral", weight: 6 },
+        { text: "este proyecto", weight: 5 },
+        { text: "esta pagina", weight: 5 },
+        { text: "equipo 6", weight: 5 },
+      ],
+      words: [
+        { text: "observatorio", weight: 4 },
+        { text: "proyecto", weight: 3 },
+        { text: "metodologia", weight: 4 },
+        { text: "fuentes", weight: 4 },
+        { text: "investigacion", weight: 4 },
+        { text: "encuesta", weight: 3 },
+        { text: "muestra", weight: 3 },
+      ],
+    },
+    {
       node: "ingles",
-      keywords: ["ingles", "english", "idioma", "b2", "c1", "b1", "bilingue", "prima"],
+      label: "Impacto del inglés (+96.5%)",
+      phrases: [
+        { text: "nivel de ingles", weight: 6 },
+        { text: "prima salarial", weight: 5 },
+      ],
+      words: [
+        { text: "ingles", weight: 5 },
+        { text: "english", weight: 5 },
+        { text: "idioma", weight: 4 },
+        { text: "bilingue", weight: 4 },
+        { text: "b2", weight: 4 },
+        { text: "c1", weight: 4 },
+        { text: "b1", weight: 4 },
+      ],
     },
     {
       node: "ir_simulador",
-      keywords: ["entrevista", "simulador", "reclutador", "practicar", "preguntas", "star"],
+      label: "Simulador de Entrevista",
+      phrases: [
+        { text: "metodo star", weight: 6 },
+        { text: "simulador de entrevista", weight: 6 },
+        { text: "practicar entrevista", weight: 6 },
+      ],
+      words: [
+        { text: "entrevista", weight: 5 },
+        { text: "entrevistas", weight: 5 },
+        { text: "simulador", weight: 5 },
+        { text: "reclutador", weight: 4 },
+        { text: "practicar", weight: 3 },
+        { text: "preguntas", weight: 3 },
+        { text: "star", weight: 4 },
+      ],
     },
     {
       node: "kit_info",
-      keywords: ["kit", "cv", "curriculum", "portafolio", "linkedin", "pitch", "traductor", "plantilla", "rubrica", "autodiagnostico"],
+      label: "Kit de Comunicación (CV, Pitch, LinkedIn)",
+      phrases: [
+        { text: "kit de comunicacion", weight: 6 },
+        { text: "elevator pitch", weight: 6 },
+        { text: "hoja de vida", weight: 5 },
+      ],
+      words: [
+        { text: "kit", weight: 4 },
+        { text: "cv", weight: 5 },
+        { text: "curriculum", weight: 5 },
+        { text: "portafolio", weight: 5 },
+        { text: "linkedin", weight: 5 },
+        { text: "pitch", weight: 5 },
+        { text: "traductor", weight: 4 },
+        { text: "plantilla", weight: 4 },
+        { text: "plantillas", weight: 4 },
+        { text: "rubrica", weight: 4 },
+        { text: "autodiagnostico", weight: 4 },
+      ],
     },
     {
       node: "datos",
-      keywords: ["salario", "sueldo", "cuanto pagan", "dinero", "mxn", "promedio", "remoto", "hibrido", "resultados", "grafica", "metodologia", "fuentes", "185"],
+      label: "Salarios y Resultados 2026",
+      phrases: [
+        { text: "cuanto pagan", weight: 6 },
+        { text: "cuanto gana", weight: 6 },
+        { text: "cuanto se gana", weight: 6 },
+        { text: "salario promedio", weight: 6 },
+      ],
+      words: [
+        { text: "salario", weight: 5 },
+        { text: "salarios", weight: 5 },
+        { text: "sueldo", weight: 5 },
+        { text: "sueldos", weight: 5 },
+        { text: "gana", weight: 4 },
+        { text: "ganan", weight: 4 },
+        { text: "pagan", weight: 4 },
+        { text: "dinero", weight: 4 },
+        { text: "mxn", weight: 4 },
+        { text: "promedio", weight: 3 },
+        { text: "remoto", weight: 4 },
+        { text: "remota", weight: 4 },
+        { text: "hibrido", weight: 4 },
+        { text: "hibrida", weight: 4 },
+        { text: "presencial", weight: 4 },
+        { text: "resultados", weight: 4 },
+        { text: "grafica", weight: 4 },
+        { text: "graficas", weight: 4 },
+        { text: "vacantes", weight: 3 },
+        { text: "185", weight: 4 },
+      ],
     },
     {
       node: "competencias",
-      keywords: ["competencia", "habilidad", "tripartito", "siempre", "algunas", "frontera", "ia", "inteligencia artificial", "sql", "power bi", "excel", "python", "scrum"],
+      label: "Competencias y Modelo Tripartito",
+      phrases: [
+        { text: "modelo tripartito", weight: 6 },
+        { text: "inteligencia artificial", weight: 5 },
+        { text: "power bi", weight: 5 },
+      ],
+      words: [
+        { text: "competencia", weight: 5 },
+        { text: "competencias", weight: 5 },
+        { text: "habilidad", weight: 4 },
+        { text: "habilidades", weight: 4 },
+        { text: "tripartito", weight: 5 },
+        { text: "herramientas", weight: 4 },
+        { text: "herramienta", weight: 4 },
+        { text: "ia", weight: 4 },
+        { text: "sql", weight: 5 },
+        { text: "excel", weight: 4 },
+        { text: "python", weight: 5 },
+        { text: "scrum", weight: 4 },
+        { text: "crm", weight: 4 },
+        { text: "erp", weight: 4 },
+        { text: "bi", weight: 4 },
+      ],
     },
     {
       node: "contacto",
-      keywords: ["contacto", "correo", "mail", "gmail", "vincular", "contratar", "empresa", "reclutar", "escaparate", "talento"],
+      label: "Contacto y Vinculación Empresarial",
+      phrases: [
+        { text: "escaparate de talento", weight: 6 },
+        { text: "soy empresa", weight: 5 },
+        { text: "quiero contratar", weight: 5 },
+      ],
+      words: [
+        { text: "contacto", weight: 5 },
+        { text: "correo", weight: 5 },
+        { text: "email", weight: 5 },
+        { text: "gmail", weight: 5 },
+        { text: "vincular", weight: 5 },
+        { text: "vinculacion", weight: 5 },
+        { text: "contratar", weight: 5 },
+        { text: "empresa", weight: 4 },
+        { text: "empresas", weight: 4 },
+        { text: "reclutar", weight: 4 },
+        { text: "escaparate", weight: 5 },
+        { text: "practicante", weight: 4 },
+        { text: "practicantes", weight: 4 },
+      ],
     },
     {
       node: "privacidad",
-      keywords: ["privacidad", "cookies", "arco", "datos personales", "terminos", "legal", "lfpdppp"],
+      label: "Privacidad, Cookies y Derechos ARCO",
+      phrases: [
+        { text: "datos personales", weight: 6 },
+        { text: "aviso de privacidad", weight: 6 },
+        { text: "derechos arco", weight: 6 },
+        { text: "terminos de uso", weight: 6 },
+      ],
+      words: [
+        { text: "privacidad", weight: 5 },
+        { text: "cookies", weight: 5 },
+        { text: "cookie", weight: 5 },
+        { text: "arco", weight: 5 },
+        { text: "terminos", weight: 4 },
+        { text: "legal", weight: 4 },
+        { text: "lfpdppp", weight: 5 },
+      ],
     },
     {
       node: "quiz_1",
-      keywords: ["sector", "scian", "recomienda", "ideal", "telas", "cosmeticos", "consultoria", "sistemas", "infraestructura", "nube"],
+      label: "Descubridor de Sector Ideal",
+      phrases: [
+        { text: "sector ideal", weight: 6 },
+        { text: "que sector", weight: 5 },
+        { text: "sectores scian", weight: 5 },
+      ],
+      words: [
+        { text: "sector", weight: 4 },
+        { text: "sectores", weight: 4 },
+        { text: "scian", weight: 5 },
+        { text: "recomienda", weight: 4 },
+        { text: "recomiendas", weight: 4 },
+        { text: "telas", weight: 4 },
+        { text: "cosmeticos", weight: 4 },
+        { text: "perfumeria", weight: 4 },
+        { text: "consultoria", weight: 4 },
+        { text: "infraestructura", weight: 4 },
+        { text: "nube", weight: 4 },
+      ],
     },
     {
       node: "inicio",
-      keywords: ["hola", "buenas", "ayuda", "menu", "inicio", "empezar", "gracias"],
+      label: "Menú principal",
+      phrases: [{ text: "buenos dias", weight: 3 }, { text: "buenas tardes", weight: 3 }],
+      words: [
+        { text: "hola", weight: 3 },
+        { text: "buenas", weight: 3 },
+        { text: "ayuda", weight: 3 },
+        { text: "menu", weight: 4 },
+        { text: "inicio", weight: 4 },
+        { text: "empezar", weight: 3 },
+        { text: "gracias", weight: 3 },
+      ],
     },
   ];
 
   function normalizeText(str) {
-    return str
+    return String(str || "")
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -216,31 +460,111 @@
       .trim();
   }
 
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function isNegated(clean, term) {
+    const escaped = escapeRegex(term);
+    const negRegex = new RegExp(`(?:^|\\s)(?:no|sin|tampoco|nunca)(?:\\s+\\w+){0,3}\\s+${escaped}(?:$|\\s)`);
+    return negRegex.test(clean);
+  }
+
+  // Distancia de Levenshtein rápida con límite 1 para tolerar errores tipográficos en palabras >= 5 letras
+  function isOneEditAway(a, b) {
+    if (Math.abs(a.length - b.length) > 1) return false;
+    let i = 0;
+    let j = 0;
+    let edits = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] === b[j]) {
+        i += 1;
+        j += 1;
+      } else {
+        edits += 1;
+        if (edits > 1) return false;
+        if (a.length > b.length) i += 1;
+        else if (b.length > a.length) j += 1;
+        else {
+          i += 1;
+          j += 1;
+        }
+      }
+    }
+    if (i < a.length || j < b.length) edits += 1;
+    return edits <= 1;
+  }
+
   function matchIntent(userInput) {
     const clean = normalizeText(userInput);
-    if (!clean) return null;
+    if (!clean) return { status: "empty" };
 
-    let bestNode = null;
-    let bestScore = 0;
+    const rawTokens = clean.split(" ").filter(Boolean);
+    const activeTokens = rawTokens.filter((t) => !STOPWORDS.has(t));
+    const tokenSet = new Set(rawTokens);
+
+    const scored = [];
 
     INTENTS.forEach((intent) => {
       let score = 0;
-      intent.keywords.forEach((kw) => {
-        if (clean.includes(kw)) {
-          score += kw.includes(" ") ? 3 : 2;
+
+      // 1. Frases exactas respetando límites de palabra
+      (intent.phrases || []).forEach(({ text, weight }) => {
+        const phraseRegex = new RegExp(`(?:^|\\s)${escapeRegex(text)}(?:$|\\s)`);
+        if (phraseRegex.test(clean) && !isNegated(clean, text)) {
+          score += weight;
         }
       });
-      if (score > bestScore) {
-        bestScore = score;
-        bestNode = intent.node;
+
+      // 2. Tokens completos (cero coincidencias dentro de otra palabra como "star" en "gustaria")
+      (intent.words || []).forEach(({ text, weight }) => {
+        if (tokenSet.has(text)) {
+          if (!isNegated(clean, text)) {
+            score += weight;
+          }
+          return;
+        }
+
+        // Tolerancia a 1 error de dedo solo para palabras >= 5 caracteres que no son stopwords
+        if (text.length >= 5) {
+          const fuzzyHit = activeTokens.some((tok) => tok.length >= 5 && isOneEditAway(tok, text));
+          if (fuzzyHit && !isNegated(clean, text)) {
+            score += Math.max(2, weight - 1);
+          }
+        }
+      });
+
+      if (score > 0) {
+        scored.push({ node: intent.node, label: intent.label, score });
       }
     });
 
-    return bestNode;
+    scored.sort((a, b) => b.score - a.score);
+
+    // Escudo fuera de alcance si no hay coincidencia válida del dominio
+    const hasOutOfScope = rawTokens.some((tok) => OUT_OF_SCOPE_TOKENS.has(tok));
+    if (scored.length === 0 || (hasOutOfScope && scored[0].score < 4)) {
+      return { status: hasOutOfScope ? "out_of_scope" : "unknown" };
+    }
+
+    const top = scored[0];
+    // Desambiguación cuando hay empate o diferencia mínima (<= 1 pt) entre temas distintos
+    const closeCandidates = scored.filter(
+      (item) => item.node !== "inicio" && top.score - item.score <= 1
+    );
+
+    if (closeCandidates.length >= 2 && top.score < 6) {
+      return {
+        status: "ambiguous",
+        candidates: closeCandidates.slice(0, 3),
+      };
+    }
+
+    return { status: "match", node: top.node };
   }
 
   function formatBotHtml(text) {
-    return text
+    return String(text || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -292,7 +616,7 @@
         <input
           id="lnd-bot-input"
           type="text"
-          placeholder="Pregunta sobre salarios, inglés, CV..."
+          placeholder="Pregunta sobre la carrera, salarios, CV..."
           maxlength="160"
         />
         <button type="submit" class="lnd-bot-send" aria-label="Enviar consulta">
@@ -324,7 +648,7 @@
   document.body.appendChild(botRoot);
 
   /* =========================================================
-     ESTADO Y PERSISTENCIA EN SESIÓN
+     ESTADO, CONCURRENCIA Y PERSISTENCIA EN SESIÓN
      ========================================================= */
   const panel = document.getElementById("lnd-bot-panel");
   const launcher = document.getElementById("lnd-bot-launcher");
@@ -334,8 +658,12 @@
   const optionsEl = document.getElementById("lnd-bot-options");
   const botForm = document.getElementById("lnd-bot-form");
   const botInput = document.getElementById("lnd-bot-input");
+  const botSendBtn = botForm?.querySelector("button[type='submit']");
   const iconOpen = launcher.querySelector(".bot-icon-open");
   const iconClose = launcher.querySelector(".bot-icon-close");
+
+  let isReplying = false;
+  let replyTimer = null;
 
   let state = {
     messages: [],
@@ -343,28 +671,54 @@
     quizSector: "sistemas",
   };
 
+  function isValidMessage(msg) {
+    return (
+      msg &&
+      typeof msg === "object" &&
+      (msg.sender === "user" || msg.sender === "bot") &&
+      typeof msg.text === "string"
+    );
+  }
+
   function loadState() {
     try {
       const raw = window.sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed.messages) && parsed.messages.length > 0) {
-          state = parsed;
+        if (
+          parsed &&
+          Array.isArray(parsed.messages) &&
+          parsed.messages.length > 0 &&
+          parsed.messages.every(isValidMessage)
+        ) {
+          state = {
+            messages: parsed.messages.slice(-MAX_HISTORY),
+            currentOptions: Array.isArray(parsed.currentOptions) ? parsed.currentOptions : NODES.inicio.options,
+            quizSector: QUIZ_RESULTS[parsed.quizSector] ? parsed.quizSector : "sistemas",
+          };
           return true;
         }
       }
     } catch {
-      // Ignora si sessionStorage no está disponible
+      // Ignora si sessionStorage no está disponible o está corrupto
     }
     return false;
   }
 
   function saveState() {
     try {
+      if (state.messages.length > MAX_HISTORY) {
+        state.messages = state.messages.slice(-MAX_HISTORY);
+      }
       window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       // Ignora restricciones de almacenamiento
     }
+  }
+
+  function setReplyingLock(locked) {
+    isReplying = locked;
+    if (botSendBtn) botSendBtn.disabled = locked;
   }
 
   function scrollMessagesToBottom() {
@@ -381,9 +735,9 @@
           return `<div class="lnd-msg lnd-msg-user"><span>${formatBotHtml(msg.text)}</span></div>`;
         }
         const linksHtml =
-          msg.links && msg.links.length > 0
+          Array.isArray(msg.links) && msg.links.length > 0
             ? `<div class="lnd-msg-links">${msg.links
-                .map((l) => `<a href="${l.href}">${l.label} →</a>`)
+                .map((l) => `<a href="${l.href}">${formatBotHtml(l.label)} →</a>`)
                 .join("")}</div>`
             : "";
         return `
@@ -404,12 +758,15 @@
     optionsEl.innerHTML = (state.currentOptions || [])
       .map(
         (opt, idx) =>
-          `<button type="button" class="lnd-bot-chip" data-opt-idx="${idx}">${opt.label}</button>`
+          `<button type="button" class="lnd-bot-chip" data-opt-idx="${idx}">${formatBotHtml(opt.label)}</button>`
       )
       .join("");
   }
 
   function pushBotReply(payload) {
+    window.clearTimeout(replyTimer);
+    setReplyingLock(true);
+
     const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const delay = prefersReduced ? 0 : 280;
 
@@ -421,7 +778,7 @@
       scrollMessagesToBottom();
     }
 
-    window.setTimeout(() => {
+    replyTimer = window.setTimeout(() => {
       state.messages.push({
         sender: "bot",
         text: payload.text,
@@ -431,6 +788,7 @@
       saveState();
       renderMessages();
       renderOptions();
+      setReplyingLock(false);
     }, delay);
   }
 
@@ -464,6 +822,8 @@
   }
 
   function resetConversation() {
+    window.clearTimeout(replyTimer);
+    setReplyingLock(false);
     state = {
       messages: [
         {
@@ -514,6 +874,7 @@
   });
 
   optionsEl?.addEventListener("click", (event) => {
+    if (isReplying) return;
     const btn = event.target.closest("[data-opt-idx]");
     if (!btn) return;
     const opt = state.currentOptions[Number(btn.getAttribute("data-opt-idx"))];
@@ -528,6 +889,7 @@
 
   botForm?.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (isReplying) return;
     const raw = botInput?.value.trim() || "";
     if (!raw) return;
 
@@ -535,12 +897,27 @@
     state.messages.push({ sender: "user", text: raw });
     renderMessages();
 
-    const matchedNode = matchIntent(raw);
-    if (matchedNode) {
-      handleNode(matchedNode);
+    const result = matchIntent(raw);
+    if (result.status === "match") {
+      handleNode(result.node);
+    } else if (result.status === "ambiguous") {
+      const candidateOptions = result.candidates.map((c) => ({
+        label: c.label,
+        next: c.node,
+      }));
+      candidateOptions.push({ label: "Menú principal", next: "inicio" });
+      pushBotReply({
+        text: "Tu consulta se relaciona con más de un tema del Observatorio. ¿Cuál te gustaría explorar primero?",
+        options: candidateOptions,
+      });
+    } else if (result.status === "out_of_scope") {
+      pushBotReply({
+        text: `Soy un asistente guiado enfocado exclusivamente en el Observatorio **OLD-LND 2026** (carrera de Negocios Digitales, salarios, sectores SCIAN, Kit de Comunicación y vinculación).\n\nNo cuento con información fuera de ese ámbito, pero puedes elegir una ruta abajo o escribir a **${CONTACT_EMAIL}**.`,
+        options: NODES.inicio.options,
+      });
     } else {
       pushBotReply({
-        text: "No encontré una coincidencia exacta para esa frase, pero puedo ayudarte con **salarios, inglés, competencias, CV/Pitch, simulador de entrevista o vinculación con empresas**. Elige una ruta:",
+        text: "No encontré una coincidencia exacta para esa frase, pero puedo explicarte **qué es la carrera LND**, mostrarte **salarios e inglés**, guiarte al **Kit y Simulador** o conectarte con **empresas**. Elige una ruta:",
         options: NODES.inicio.options,
       });
     }

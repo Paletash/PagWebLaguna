@@ -4687,9 +4687,17 @@ button {
   background: var(--surface);
 }
 
-.lnd-bot-form input:focus {
+.lnd-bot-form input:focus,
+.lnd-bot-form input:focus-visible {
+  outline: none;
   border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(117, 9, 70, 0.18);
   background: var(--white);
+}
+
+.lnd-bot-send:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .lnd-bot-send {
