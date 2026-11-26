@@ -385,6 +385,62 @@
             </section>
           </div>
 
+          <!-- BOT SIMULADOR DE ENTREVISTA LND (OPCIÓN 2 · SINCRONIZADO POR SECTOR) -->
+          <section class="sim-section" id="simulador-entrevista" aria-labelledby="sim-heading">
+            <div class="sim-header">
+              <div>
+                <span class="module-pill">Entrenador Interactivo · Bot Reclutador</span>
+                <h2 id="sim-heading">Simulador de Entrevista LND por Sector</h2>
+                <p>
+                  Pon a prueba tu discurso frente a un reclutador simulado. Responde 3 preguntas
+                  reales adaptadas al sector elegido arriba y recibe retroalimentación inmediata
+                  basada en los criterios de especialistas (Fase 3).
+                </p>
+              </div>
+              <div class="sim-meta-actions">
+                <span class="sim-sector-pill" id="sim-sector-badge">Sector: Diseño de Sistemas</span>
+                <button type="button" class="button button-secondary" id="sim-reset-btn">
+                  Reiniciar entrevista
+                </button>
+              </div>
+            </div>
+
+            <div class="sim-shell">
+              <div class="sim-chat-window">
+                <div class="sim-chat-topbar">
+                  <div class="sim-recruiter-id">
+                    <span class="sim-avatar" aria-hidden="true">RH</span>
+                    <div>
+                      <strong id="sim-recruiter-role">Especialista de Talento · Diseño de Sistemas</strong>
+                      <small id="sim-step-label">Pregunta 1 de 3 · Evaluación por competencias</small>
+                    </div>
+                  </div>
+                  <div class="sim-progress-dots" id="sim-progress-dots" aria-hidden="true"></div>
+                </div>
+
+                <div class="sim-transcript" id="sim-transcript" role="log" aria-live="polite"></div>
+                <div class="sim-choices" id="sim-choices" aria-label="Opciones de respuesta para la entrevista"></div>
+              </div>
+
+              <aside class="sim-summary-panel" id="sim-summary-panel" aria-live="polite">
+                <span class="sub-eyebrow">Evaluación en tiempo real</span>
+                <div class="sim-score-box">
+                  <strong id="sim-score-num">0 / 100</strong>
+                  <span id="sim-score-tag" class="sim-level-tag">En curso</span>
+                </div>
+                <p id="sim-summary-text">
+                  Elige la respuesta que darías en una entrevista real. Cada turno evaluará si hablas
+                  en <strong>Modo Estudiante</strong> o en <strong>Modo Especialista</strong>.
+                </p>
+                <ul class="sim-legend">
+                  <li><span class="dot-expert"></span><strong>Especialista (+34 pts):</strong> Verbo de acción + herramienta + impacto medible.</li>
+                  <li><span class="dot-mid"></span><strong>Intermedia (+20 pts):</strong> Conocimiento técnico correcto, pero sin métrica de negocio.</li>
+                  <li><span class="dot-student"></span><strong>Escolar (+5 pts):</strong> Enfoque pasivo basado solo en materias cursadas.</li>
+                </ul>
+              </aside>
+            </div>
+          </section>
+
           <!-- CIERRE NATURAL DE VINCULACIÓN: ESCAPARATE DE TALENTO (PARA EMPRESAS) -->
           <article class="talent-panel talent-banner" id="contacto">
             <div class="talent-banner-grid">

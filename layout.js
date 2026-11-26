@@ -256,4 +256,13 @@
       cookieBanner?.querySelector("button")?.focus();
     });
   });
+
+  /* 3. INYECCIÓN DEL BOT FLOTANTE GLOBAL (bot.js) */
+  if (!document.getElementById("old-lnd-bot-script")) {
+    const botScript = document.createElement("script");
+    botScript.id = "old-lnd-bot-script";
+    botScript.src = "./bot.js";
+    botScript.defer = true;
+    document.body.appendChild(botScript);
+  }
 })();

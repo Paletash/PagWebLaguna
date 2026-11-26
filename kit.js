@@ -969,6 +969,7 @@ ${sector.cvTemplate.metricsToInclude.map((m) => `- ${m}`).join("\n")}
     renderPitchStage();
     renderLinkedInModule();
     renderRubric();
+    resetInterviewSimulator();
   }
 
   /* =========================================================
@@ -1155,6 +1156,614 @@ DETALLE POR CRITERIO:
 ${lines.join("\n\n")}
 `;
     triggerFileDownload(`Autodiagnostico_LND_${sector.id}.txt`, report, "text/plain;charset=utf-8");
+  });
+
+  /* =========================================================
+     8. BOT SIMULADOR DE ENTREVISTA LND (estrategia.html)
+     ========================================================= */
+  const INTERVIEW_SCENARIOS = {
+    "diseno-sistemas": {
+      recruiter: "Líder de Producto y Talento · Diseño de Sistemas",
+      questions: [
+        {
+          topic: "Herramientas y puente negocio–TI",
+          prompt: "En nuestros proyectos de software necesitamos alguien que hable con clientes y con desarrolladores. ¿Cómo has trabajado con herramientas de seguimiento y datos?",
+          options: [
+            {
+              letter: "A",
+              level: "escolar",
+              points: 5,
+              text: "Llevé materias de administración de proyectos y sé usar Excel y Word para entregar reportes de equipo.",
+              feedback: "Demasiado escolar. Mencionar materias no demuestra operación ágil ni lenguaje técnico de producto.",
+            },
+            {
+              letter: "B",
+              level: "especialista",
+              points: 34,
+              text: "Documenté historias de usuario y backlog en Jira bajo Scrum, y construí un tablero de adopción en Power BI para priorizar mejoras con el equipo técnico.",
+              feedback: "Excelente respuesta Modo Empresa: conectas marco ágil (Jira/Scrum), analítica (Power BI) y valor de producto.",
+            },
+            {
+              letter: "C",
+              level: "intermedio",
+              points: 20,
+              text: "He usado Jira y Power BI en proyectos escolares para organizar tareas y graficar encuestas de usuarios.",
+              feedback: "Buen nivel técnico, pero falta explicar qué decisión de negocio o mejora concreta lograste con esas herramientas.",
+            },
+          ],
+        },
+        {
+          topic: "Enfoque CRM y retención",
+          prompt: "Si detectas que los usuarios abandonan una plataforma durante su registro, ¿qué propondrías primero?",
+          options: [
+            {
+              letter: "A",
+              level: "intermedio",
+              points: 20,
+              text: "Haría una encuesta de satisfacción y le pediría al equipo de diseño que cambie los colores y botones.",
+              feedback: "Es intuitivo, pero un especialista prioriza medir el punto exacto de fuga antes de rediseñar visualmente.",
+            },
+            {
+              letter: "B",
+              level: "escolar",
+              points: 5,
+              text: "Revisaría la teoría de experiencia de usuario que vimos en clase para proponer ideas creativas.",
+              feedback: "Falta aterrizaje operativo. Las empresas de sistemas buscan diagnóstico basado en embudo y datos reales.",
+            },
+            {
+              letter: "C",
+              level: "especialista",
+              points: 33,
+              text: "Mediría el embudo paso a paso para ubicar dónde cae la conversión, haría pruebas con 10–15 usuarios y priorizaría reducir fricción junto con alertas en CRM.",
+              feedback: "Respuesta sólida: combinas medición de embudo, validación UX y seguimiento comercial en CRM.",
+            },
+          ],
+        },
+        {
+          topic: "Situacional STAR + IA 2026",
+          prompt: "Cuéntame brevemente cómo has usado IA o automatización para resolver un cuello de botella real.",
+          options: [
+            {
+              letter: "A",
+              level: "especialista",
+              points: 33,
+              text: "En un proyecto con documentación dispersa (S), estandaricé historias de usuario y pruebas apoyándome en copilotos de IA y plantillas en Jira (A), reduciendo 40% el tiempo de entrega (R).",
+              feedback: "Impecable uso de STAR + Frontera IA: demuestras criterio práctico y resultado cuantificable.",
+            },
+            {
+              letter: "B",
+              level: "escolar",
+              points: 5,
+              text: "Uso ChatGPT seguido para resumir PDFs largos y corregir ortografía en mis tareas de la universidad.",
+              feedback: "Uso demasiado básico. En 2026 los reclutadores buscan aplicación de IA en procesos y productividad real.",
+            },
+            {
+              letter: "C",
+              level: "intermedio",
+              points: 20,
+              text: "Usé inteligencia artificial para generar ideas de prototipos y redactar textos de una app escolar.",
+              feedback: "Buen inicio, pero necesitas estructurarlo con método STAR y agregar el impacto medible obtenido.",
+            },
+          ],
+        },
+      ],
+    },
+    "comercio-telas": {
+      recruiter: "Head of Growth & E-commerce · Retail de Telas",
+      questions: [
+        {
+          topic: "Métricas de rentabilidad digital",
+          prompt: "Nuestro presupuesto de pauta digital debe justificarse cada semana. ¿Qué indicadores revisarías primero?",
+          options: [
+            {
+              letter: "A",
+              level: "especialista",
+              points: 34,
+              text: "Evaluaría ROAS, CAC frente a LTV, tasa de conversión (CVR) y margen por categoría en Looker Studio para reasignar inversión hacia los SKU más rentables.",
+              feedback: "Exacto: en este sector (salario prom. $47,750 MXN) el perfil ganador habla el idioma del margen y retorno.",
+            },
+            {
+              letter: "B",
+              level: "escolar",
+              points: 5,
+              text: "Revisaría cuántos likes, comentarios y seguidores nuevos ganaron las publicaciones de la semana.",
+              feedback: "Métricas de vanidad. Un especialista de Growth descarta perfiles que no conectan pauta con ventas y margen.",
+            },
+            {
+              letter: "C",
+              level: "intermedio",
+              points: 20,
+              text: "Analizaría el alcance, los clics y el costo por clic en redes sociales para ver qué anuncio funcionó mejor.",
+              feedback: "Vas por buen camino, pero te quedaste en la parte alta del embudo sin conectar con CAC, ROAS ni rentabilidad.",
+            },
+          ],
+        },
+        {
+          topic: "Analítica comercial y catálogo",
+          prompt: "¿Cómo aportarías valor si nuestra tienda en línea tiene mucho tráfico pero pocas compras?",
+          options: [
+            {
+              letter: "A",
+              level: "intermedio",
+              points: 20,
+              text: "Revisaría las fotos de los productos y probaría poner más descuentos para incentivar las ventas.",
+              feedback: "Bajar precios sin diagnóstico erosiona el margen. Primero hay que identificar dónde se rompe el checkout.",
+            },
+            {
+              letter: "B",
+              level: "especialista",
+              points: 33,
+              text: "Auditaría el embudo CRO (ficha, carrito y pago), cruzaría ticket promedio y rotación en Power BI y correría pruebas A/B antes de tocar precios.",
+              feedback: "Gran criterio comercial y analítico: proteges margen y resuelves conversión con hipótesis medibles.",
+            },
+            {
+              letter: "C",
+              level: "escolar",
+              points: 5,
+              text: "Hice una tienda de prueba en la escuela y subiría más publicaciones en Instagram para atraer más gente.",
+              feedback: "Si el tráfico no convierte, traer más tráfico solo quema presupuesto. Falta diagnóstico de embudo.",
+            },
+          ],
+        },
+        {
+          topic: "Frontera IA aplicada a Retail",
+          prompt: "El 52% de nuestras vacantes valoran IA aplicada. ¿Cómo la integrarías en Growth o E-commerce?",
+          options: [
+            {
+              letter: "A",
+              level: "escolar",
+              points: 5,
+              text: "Le pediría a una IA que escriba los copys de redes sociales para ahorrar tiempo.",
+              feedback: "Es el uso mínimo esperado. No diferencia a un perfil de Negocios Digitales en 2026.",
+            },
+            {
+              letter: "B",
+              level: "intermedio",
+              points: 20,
+              text: "Usaría herramientas de IA para generar variaciones de anuncios e imágenes de catálogo más rápido.",
+              feedback: "Útil en producción creativa, pero suma mucho más si lo vinculas a pruebas A/B y desempeño de pujas.",
+            },
+            {
+              letter: "C",
+              level: "especialista",
+              points: 33,
+              text: "Combinaría IA generativa para iterar creatividades con análisis de cohortes y optimización de pujas en Retail Media para elevar el ROAS proyectado.",
+              feedback: "Nivel especialista: unes creatividad escalable, datos de clientes y optimización algorítmica de inversión.",
+            },
+          ],
+        },
+      ],
+    },
+    "infraestructura-computo": {
+      recruiter: "Gerente de Operaciones Digitales · Infraestructura y Nube",
+      questions: [
+        {
+          topic: "Umbral basal operativo",
+          prompt: "Aquí manejamos catálogos grandes y reportes diarios. ¿Cuál es tu fortaleza real en Excel y analítica web?",
+          options: [
+            {
+              letter: "A",
+              level: "intermedio",
+              points: 20,
+              text: "Manejo tablas dinámicas, fórmulas básicas y sé entrar a Google Analytics para ver visitas.",
+              feedback: "Aceptable como base, pero en este sector (51% umbral basal) esperan automatización y precisión operativa.",
+            },
+            {
+              letter: "B",
+              level: "especialista",
+              points: 34,
+              text: "Normalizo bases en Excel avanzado y GA4 para construir tableros de seguimiento de conversión y disponibilidad, reduciendo errores y tiempos de reporte.",
+              feedback: "Excelente: proyectas orden, confiabilidad operativa y orientación directa a resultados.",
+            },
+            {
+              letter: "C",
+              level: "escolar",
+              points: 5,
+              text: "Tengo nivel intermedio de Excel porque lo usamos en casi todas las materias de la licenciatura.",
+              feedback: "Muy genérico. Decir 'intermedio' sin explicar qué problemas resuelves no convence en entrevista técnica.",
+            },
+          ],
+        },
+        {
+          topic: "Marketplaces y operación ERP",
+          prompt: "Si un producto estrella se agota en almacén pero sigue activo en Mercado Libre o Amazon, ¿qué impacto ves y cómo actúas?",
+          options: [
+            {
+              letter: "A",
+              level: "especialista",
+              points: 33,
+              text: "Afecta reputación, cancelaciones y SLA; pausaría la publicación de inmediato, conciliaría inventario contra el ERP y establecería una alerta preventiva de stock mínimo.",
+              feedback: "Visión integral de Negocios Digitales: proteges la reputación del marketplace y resuelves la causa raíz en back-office.",
+            },
+            {
+              letter: "B",
+              level: "escolar",
+              points: 5,
+              text: "Le avisaría al cliente por mensaje que espere unos días a que llegue el producto.",
+              feedback: "En marketplaces eso dispara penalizaciones de cuenta y pérdida de Buy Box.",
+            },
+            {
+              letter: "C",
+              level: "intermedio",
+              points: 20,
+              text: "Pausaría el producto en la plataforma y avisaría al equipo de almacén por correo.",
+              feedback: "Resuelves la urgencia, pero falta proponer la conciliación sistémica (ERP) para evitar que vuelva a ocurrir.",
+            },
+          ],
+        },
+        {
+          topic: "Situacional STAR",
+          prompt: "Describe una situación donde ordenaste información desestructurada para facilitar una decisión.",
+          options: [
+            {
+              letter: "A",
+              level: "escolar",
+              points: 5,
+              text: "En varios trabajos en equipo yo era quien juntaba las partes de todos en un solo archivo antes de entregar.",
+              feedback: "Hablar de 'juntar partes de tareas' no proyecta rigor profesional ni impacto medible.",
+            },
+            {
+              letter: "B",
+              level: "especialista",
+              points: 33,
+              text: "Ante reportes dispersos en un caso de canal digital (S), limpié las fuentes en Excel y GA4 creando un tablero con 8 KPIs críticos (A), reduciendo 60% el tiempo de reporte semanal (R).",
+              feedback: "Respuesta STAR impecable: clara, concisa y con una métrica concreta de eficiencia operativa.",
+            },
+            {
+              letter: "C",
+              level: "intermedio",
+              points: 20,
+              text: "Organicé una base de datos de ventas de un proyecto escolar para que se entendiera mejor en una exposición.",
+              feedback: "Buena experiencia, pero necesitas cuantificar el beneficio y nombrar las herramientas usadas.",
+            },
+          ],
+        },
+      ],
+    },
+    "consultoria-admin": {
+      recruiter: "Senior Manager de Transformación · Consultoría Admin.",
+      questions: [
+        {
+          topic: "Estructuración de Business Case",
+          prompt: "Un cliente tradicional quiere 'digitalizarse', pero su presupuesto es limitado. ¿Cómo arrancas el diagnóstico?",
+          options: [
+            {
+              letter: "A",
+              level: "especialista",
+              points: 34,
+              text: "Mapeo sus procesos críticos para detectar cuellos de botella, cuantifico tiempos y costos en Power BI/Excel y propongo una matriz impacto-esfuerzo con ROI estimado.",
+              feedback: "Mentalidad consultora pura: diagnóstico con datos, priorización financiera y hoja de ruta ejecutable.",
+            },
+            {
+              letter: "B",
+              level: "intermedio",
+              points: 20,
+              text: "Entrevisto a los directivos para conocer sus objetivos y les recomiendo implementar un CRM y redes sociales.",
+              feedback: "Falta sustento cuantitativo. En consultoría no se recomiendan herramientas sin antes modelar viabilidad y ROI.",
+            },
+            {
+              letter: "C",
+              level: "escolar",
+              points: 5,
+              text: "Haría un análisis FODA y una presentación explicando la importancia de la transformación digital.",
+              feedback: "Demasiado teórico. Los clientes de consultoría pagan por decisiones accionables y retorno, no por teoría general.",
+            },
+          ],
+        },
+        {
+          topic: "Gestión de proyectos y stakeholders",
+          prompt: "¿Qué haces si un área del cliente se resiste a adoptar la nueva herramienta digital que propusiste?",
+          options: [
+            {
+              letter: "A",
+              level: "escolar",
+              points: 5,
+              text: "Le digo a su jefe directo para que los obligue a usar el sistema nuevo.",
+              feedback: "Escalar sin gestión del cambio suele fracasar y rompe la relación con el cliente.",
+            },
+            {
+              letter: "B",
+              level: "intermedio",
+              points: 20,
+              text: "Les daría una capacitación extra con un manual en PDF para que vean cómo funciona.",
+              feedback: "Ayuda, pero la resistencia suele venir de fricción operativa o miedo al cambio, no solo falta de manual.",
+            },
+            {
+              letter: "C",
+              level: "especialista",
+              points: 33,
+              text: "Aplico gestión del cambio: identifico sus dolores diarios, muestro una victoria rápida que les ahorre trabajo y defino hitos de adopción medibles con acompañamiento.",
+              feedback: "Sobresaliente: combinas empatía organizacional, comunicación ejecutiva y control de adopción.",
+            },
+          ],
+        },
+        {
+          topic: "IA y Ciencia de Datos en consultoría",
+          prompt: "IA y Datos es el clúster #1 en nuestras vacantes. ¿Cómo sustentarías un caso de uso de IA ante dirección?",
+          options: [
+            {
+              letter: "A",
+              level: "intermedio",
+              points: 20,
+              text: "Explicaría las últimas tendencias de IA en el mercado y qué herramientas están usando sus competidores.",
+              feedback: "Buen contexto, pero a dirección le importa el retorno interno concreto en costos, tiempo o ingresos.",
+            },
+            {
+              letter: "B",
+              level: "especialista",
+              points: 33,
+              text: "Elegiría un proceso repetitivo de alto costo, plantearía un piloto de 60 días con métricas claras (horas ahorradas y tasa de error) y un análisis costo-beneficio.",
+              feedback: "Respuesta de nivel consultor: bajas el hype de la IA a un piloto controlado y financieramente defendible.",
+            },
+            {
+              letter: "C",
+              level: "escolar",
+              points: 5,
+              text: "Mencionaría que la IA es el futuro y que las empresas que no la usen van a desaparecer.",
+              feedback: "Cliché genérico. Nunca sustituye un argumento financiero ni una propuesta concreta.",
+            },
+          ],
+        },
+      ],
+    },
+    "comercio-cosmeticos": {
+      recruiter: "BI & Retail Media Lead · Cosméticos y Belleza",
+      questions: [
+        {
+          topic: "Inteligencia de Negocios (Sell-in / Sell-out)",
+          prompt: "En consumo y belleza necesitamos leer rápido qué productos se mueven. ¿Cómo estructurarías un tablero comercial?",
+          options: [
+            {
+              letter: "A",
+              level: "escolar",
+              points: 5,
+              text: "Pondría gráficas de barras y pastel con las ventas totales de cada mes para que se vea presentable.",
+              feedback: "Un tablero ejecutivo no es solo estético; debe separar desempeño por categoría, margen y rotación.",
+            },
+            {
+              letter: "B",
+              level: "especialista",
+              points: 34,
+              text: "Modelaría en SQL y Power BI el sell-in vs. sell-out, margen por SKU, estacionalidad y tasa de recompra para detectar quiebres y oportunidades promocionales.",
+              feedback: "Nivel especialista: dominas vocabulario clave de consumo masivo y herramientas técnicas (SQL + BI).",
+            },
+            {
+              letter: "C",
+              level: "intermedio",
+              points: 20,
+              text: "Usaría Power BI para mostrar las ventas por producto y los meses donde se vende más.",
+              feedback: "Correcto como punto de partida, pero agregar sell-out, margen y recompra marca la diferencia en BI.",
+            },
+          ],
+        },
+        {
+          topic: "Fidelización CRM y LTV",
+          prompt: "Las promociones atraen muchos compradores nuevos, pero pocos regresan al segundo mes. ¿Qué estrategia propondrías?",
+          options: [
+            {
+              letter: "A",
+              level: "intermedio",
+              points: 20,
+              text: "Mandaría correos semanales con cupones de descuento a toda la base de clientes.",
+              feedback: "Enviar cupones masivos sin segmentación entrena al cliente a solo comprar con descuento y baja el margen.",
+            },
+            {
+              letter: "B",
+              level: "escolar",
+              points: 5,
+              text: "Hacer sorteos en redes sociales para que la gente recuerde la marca.",
+              feedback: "Los sorteos atraen cazadores de premios, no recompra rentable ni valor de vida (LTV).",
+            },
+            {
+              letter: "C",
+              level: "especialista",
+              points: 33,
+              text: "Segmentaría por ciclo de reposición del producto en CRM para disparar flujos personalizados (cross-sell y recordatorio) midiendo retención y LTV.",
+              feedback: "Brillante: en cosméticos el ciclo de reposición es el disparador más rentable de recompra.",
+            },
+          ],
+        },
+        {
+          topic: "Retail Media y conversión",
+          prompt: "¿Cómo mejorarías las ventas de una línea de perfumería dentro de marketplaces competidos?",
+          options: [
+            {
+              letter: "A",
+              level: "especialista",
+              points: 33,
+              text: "Optimizaría fichas A+, reseñas y disponibilidad de Buy Box, combinándolo con pujas de Retail Media monitoreando GMV y tasa de conversión (CVR).",
+              feedback: "Excelente dominio del ecosistema Retail Media actual en México.",
+            },
+            {
+              letter: "B",
+              level: "escolar",
+              points: 5,
+              text: "Subiría buenas fotos y pondría un precio más barato que la competencia.",
+              feedback: "Competir solo por precio destruye posicionamiento de marca y rentabilidad.",
+            },
+            {
+              letter: "C",
+              level: "intermedio",
+              points: 20,
+              text: "Mejoraría las descripciones de los productos y pagaría anuncios dentro de Amazon y Mercado Libre.",
+              feedback: "Buena dirección; súmale el control de Buy Box, GMV y CVR para hablar como especialista.",
+            },
+          ],
+        },
+      ],
+    },
+  };
+
+  const simSectorBadge = document.getElementById("sim-sector-badge");
+  const simRecruiterRole = document.getElementById("sim-recruiter-role");
+  const simStepLabel = document.getElementById("sim-step-label");
+  const simProgressDots = document.getElementById("sim-progress-dots");
+  const simTranscript = document.getElementById("sim-transcript");
+  const simChoices = document.getElementById("sim-choices");
+  const simScoreNum = document.getElementById("sim-score-num");
+  const simScoreTag = document.getElementById("sim-score-tag");
+  const simSummaryText = document.getElementById("sim-summary-text");
+  const simResetBtn = document.getElementById("sim-reset-btn");
+
+  let simState = {
+    step: 0,
+    score: 0,
+    history: [],
+    finished: false,
+  };
+
+  function renderInterviewSimulator() {
+    if (!simTranscript || !simChoices) return;
+    const sector = KIT_SECTORS[activeSectorId];
+    const scenario = INTERVIEW_SCENARIOS[activeSectorId];
+    if (!sector || !scenario) return;
+
+    const totalQ = scenario.questions.length;
+
+    if (simSectorBadge) simSectorBadge.textContent = `Sector: ${sector.shortName}`;
+    if (simRecruiterRole) simRecruiterRole.textContent = scenario.recruiter;
+    if (simStepLabel) {
+      simStepLabel.textContent = simState.finished
+        ? `Entrevista completada · ${totalQ} de ${totalQ} preguntas`
+        : `Pregunta ${simState.step + 1} de ${totalQ} · ${scenario.questions[simState.step].topic}`;
+    }
+
+    if (simProgressDots) {
+      simProgressDots.innerHTML = scenario.questions
+        .map((_, idx) => {
+          const cls =
+            idx < simState.step || simState.finished
+              ? "done"
+              : idx === simState.step
+                ? "current"
+                : "";
+          return `<span class="sim-dot ${cls}"></span>`;
+        })
+        .join("");
+    }
+
+    if (simScoreNum) simScoreNum.textContent = `${simState.score} / 100`;
+    if (simScoreTag) {
+      if (!simState.finished && simState.step === 0) {
+        simScoreTag.className = "sim-level-tag";
+        simScoreTag.textContent = "En curso";
+      } else if (simState.score >= 80) {
+        simScoreTag.className = "sim-level-tag level-expert";
+        simScoreTag.textContent = "Modo Especialista";
+      } else if (simState.score >= 50) {
+        simScoreTag.className = "sim-level-tag level-mid";
+        simScoreTag.textContent = "Nivel Intermedio";
+      } else {
+        simScoreTag.className = "sim-level-tag level-student";
+        simScoreTag.textContent = "Modo Estudiante";
+      }
+    }
+
+    // Construir transcripción de la entrevista
+    const itemsHtml = simState.history
+      .map((entry) => {
+        if (entry.type === "question") {
+          return `<div class="sim-msg sim-msg-recruiter"><small>${entry.topic}</small><p>${entry.text}</p></div>`;
+        }
+        if (entry.type === "answer") {
+          return `<div class="sim-msg sim-msg-user"><p>${entry.text}</p></div>`;
+        }
+        return `<div class="sim-msg sim-msg-feedback fb-${entry.level}"><strong>${entry.label} (+${entry.points} pts):</strong> ${entry.text}</div>`;
+      })
+      .join("");
+
+    simTranscript.innerHTML = itemsHtml;
+    simTranscript.scrollTop = simTranscript.scrollHeight;
+
+    if (simState.finished) {
+      const verdict =
+        simState.score >= 80
+          ? `¡Excelente desempeño para ${sector.shortName}! Tu discurso proyecta lenguaje de negocio, métricas y herramientas alineadas a 2026.`
+          : simState.score >= 50
+            ? `Buen avance en ${sector.shortName}, pero aún puedes elevar tu impacto. Refuerza el Módulo 1 (Traductor) y el Módulo 3 (Método STAR).`
+            : `Tus respuestas aún suenan en formato escolar frente a lo que espera ${sector.shortName}. Practica primero en el Módulo 1 (Traductor) y vuelve a intentarlo.`;
+
+      if (simSummaryText) simSummaryText.textContent = verdict;
+      simChoices.innerHTML = `
+        <div class="sim-finish-bar">
+          <p><strong>Resultado final: ${simState.score}/100</strong> — ${verdict}</p>
+          <button type="button" class="button button-primary" id="sim-replay-btn">Practicar de nuevo</button>
+        </div>
+      `;
+      document.getElementById("sim-replay-btn")?.addEventListener("click", resetInterviewSimulator);
+      return;
+    }
+
+    if (simSummaryText && simState.step === 0) {
+      simSummaryText.innerHTML =
+        'Elige la respuesta que darías en una entrevista real. Cada turno evaluará si hablas en <strong>Modo Estudiante</strong> o en <strong>Modo Especialista</strong>.';
+    }
+
+    const currentQ = scenario.questions[simState.step];
+    simChoices.innerHTML = currentQ.options
+      .map(
+        (opt, idx) => `
+        <button type="button" class="sim-choice-btn" data-sim-opt="${idx}">
+          <span class="sim-choice-letter">${opt.letter}</span>
+          <span>${opt.text}</span>
+        </button>
+      `
+      )
+      .join("");
+  }
+
+  function resetInterviewSimulator() {
+    const scenario = INTERVIEW_SCENARIOS[activeSectorId];
+    if (!scenario) return;
+    const firstQ = scenario.questions[0];
+    simState = {
+      step: 0,
+      score: 0,
+      finished: false,
+      history: [{ type: "question", topic: firstQ.topic, text: firstQ.prompt }],
+    };
+    renderInterviewSimulator();
+  }
+
+  simChoices?.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-sim-opt]");
+    if (!btn || simState.finished) return;
+
+    const scenario = INTERVIEW_SCENARIOS[activeSectorId];
+    const currentQ = scenario?.questions[simState.step];
+    const chosen = currentQ?.options[Number(btn.getAttribute("data-sim-opt"))];
+    if (!chosen) return;
+
+    const labelMap = {
+      especialista: "Feedback Especialista · Alto impacto",
+      intermedio: "Feedback Especialista · Mejorable",
+      escolar: "Feedback Especialista · Brecha Fase 3",
+    };
+
+    simState.score = Math.min(100, simState.score + chosen.points);
+    simState.history.push({ type: "answer", text: chosen.text });
+    simState.history.push({
+      type: "feedback",
+      level: chosen.level,
+      label: labelMap[chosen.level],
+      points: chosen.points,
+      text: chosen.feedback,
+    });
+
+    if (simState.step + 1 < scenario.questions.length) {
+      simState.step += 1;
+      const nextQ = scenario.questions[simState.step];
+      simState.history.push({ type: "question", topic: nextQ.topic, text: nextQ.prompt });
+    } else {
+      simState.finished = true;
+    }
+
+    renderInterviewSimulator();
+  });
+
+  simResetBtn?.addEventListener("click", () => {
+    resetInterviewSimulator();
+    showToast("Simulador de entrevista reiniciado.");
   });
 
   // Render inicial
