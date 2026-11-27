@@ -8,6 +8,7 @@ _agent/
 *.xlsx
 *.xls
 *.csv
+*.zip
 BASE_MAESTRA_CONSOLIDADA_185_VACANTES.xlsx
 GUIA_DESPLIEGUE_Y_SEGURIDAD.md
 
