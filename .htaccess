@@ -1,0 +1,75 @@
+# =========================================================================
+# Configuración Apache / LiteSpeed para Hostinger
+# Proyecto: OLD-LND 2026 (Observatorio Laboral Digital · 3GM2)
+# =========================================================================
+
+# 1. Página de Error 404 Personalizada
+ErrorDocument 404 /404.html
+
+# 2. Forzar navegación segura HTTPS
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# 3. Cabeceras HTTP de Seguridad
+<IfModule mod_headers.c>
+  # Forzar HTTPS con HSTS por 1 año
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+  
+  # Anti-Clickjacking
+  Header always set X-Frame-Options "DENY"
+  
+  # Anti-MIME Sniffing
+  Header always set X-Content-Type-Options "nosniff"
+  
+  # Política de Referrer
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  
+  # Desactivar APIs innecesarias del navegador
+  Header always set Permissions-Policy "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), display-capture=(), geolocation=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()"
+  
+  # Content Security Policy (CSP) adaptada a Google Fonts, Meta Pixel y FormSubmit
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: https://www.facebook.com; connect-src 'self' https://formsubmit.co https://connect.facebook.net; form-action 'self' https://formsubmit.co mailto:; frame-ancestors 'none'; object-src 'none'; base-uri 'self';"
+  
+  # X-XSS-Protection legacy
+  Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# 4. Proteger archivos sensibles locales contra descargas directas
+<FilesMatch "\.(xlsx|xls|csv|bak|config|env|git|md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# 5. Compresión GZIP / Brotli para máxima velocidad de carga
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# 6. Control de Caché en el Navegador
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+  
+  # Documentos HTML: revalidar siempre para ver cambios de inmediato
+  ExpiresByType text/html "access plus 0 seconds"
+  
+  # Estilos y Scripts: 7 días
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType text/javascript "access plus 7 days"
+  
+  # Imágenes y multimedia: 1 mes
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
+</IfModule>
