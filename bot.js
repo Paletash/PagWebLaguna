@@ -73,7 +73,7 @@
       ],
     },
     que_es_old: {
-      text: "**OLD-LND 2026** (Observatorio Laboral Digital) es una investigación aplicada desarrollada por estudiantes de LND (Equipo 6).\n\nAnalizamos **185 vacantes reales** en 5 sectores SCIAN de México para cerrar la brecha entre lo que las empresas piden y cómo los estudiantes comunican sus competencias.",
+      text: "**OLD-LND 2026** (Observatorio Laboral Digital) es una investigación aplicada desarrollada por estudiantes de LND (3GM2).\n\nAnalizamos **185 vacantes reales** en 5 sectores SCIAN de México para cerrar la brecha entre lo que las empresas piden y cómo los estudiantes comunican sus competencias.",
       links: [
         { label: "Conocer la Metodología", href: "./metodologia.html" },
         { label: "Ver Resultados 2026", href: "./resultados.html" },
@@ -242,7 +242,7 @@
         { text: "observatorio laboral", weight: 6 },
         { text: "este proyecto", weight: 5 },
         { text: "esta pagina", weight: 5 },
-        { text: "equipo 6", weight: 5 },
+        { text: "3gm2", weight: 5 },
       ],
       words: [
         { text: "observatorio", weight: 4 },

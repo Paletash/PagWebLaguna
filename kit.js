@@ -608,7 +608,7 @@ ${sector.cvTemplate.metricsToInclude.map((m) => `- ${m}`).join("\n")}
   <header>
     <p class="no-print" style="font-size:12px;color:#750946;font-weight:700;">💡 Presiona Ctrl + P (o Cmd + P) para guardar este Kit completo en formato PDF.</p>
     <h1>Kit de Comunicación LND 2026 · ${sector.fullName}</h1>
-    <div class="meta">Observatorio Laboral Digital (OLD-LND · Equipo 6) · ${sector.vacantes} · Salario promedio: ${sector.salary} · Exp. media: ${sector.exp}</div>
+    <div class="meta">Observatorio Laboral Digital (OLD-LND · 3GM2) · ${sector.vacantes} · Salario promedio: ${sector.salary} · Exp. media: ${sector.exp}</div>
   </header>
 
   <h2>Módulo 1 · Traductor de Competencias (Estudiante vs. Especialista)</h2>

@@ -18,7 +18,7 @@
         <a class="brand" href="./index.html" aria-label="OLD-LND 2026, ir al inicio"${currentPage === "inicio" ? ' aria-current="page"' : ""}>
           <div class="brand-badge-group">
             <img src="./img/LogoActualWebp.webp" alt="Emblema Oficial Negocios Digitales LND" class="brand-logo" width="38" height="38" />
-            <img src="./img/LND6Webp.webp" alt="Insignia Equipo 6 LND" class="brand-logo brand-logo-team" width="34" height="31" />
+            <img src="./img/LND6Webp.webp" alt="Insignia 3GM2 LND" class="brand-logo brand-logo-team" width="34" height="31" />
           </div>
           <div class="brand-label">
             <span class="brand-title">OLD-LND <b>2026</b></span>
@@ -69,8 +69,8 @@
               <div class="footer-logo-card" title="Licenciatura en Negocios Digitales">
                 <img src="./img/LogoActualWebp.webp" alt="Emblema Oficial Negocios Digitales LND" class="footer-logo" width="48" height="48" loading="lazy" />
               </div>
-              <div class="footer-logo-card" title="Iniciativa Equipo 6 LND">
-                <img src="./img/LND6Webp.webp" alt="Insignia Equipo 6 LND" class="footer-logo" width="44" height="40" loading="lazy" />
+              <div class="footer-logo-card" title="Iniciativa 3GM2 LND">
+                <img src="./img/LND6Webp.webp" alt="Insignia 3GM2 LND" class="footer-logo" width="44" height="40" loading="lazy" />
               </div>
             </div>
             <a class="brand light" href="./index.html">
@@ -79,7 +79,7 @@
             <p>Observatorio Laboral Digital para la Licenciatura en Negocios Digitales.</p>
             <div class="footer-attribution">
               <span>Investigación académica y vinculación</span>
-              <strong>Licenciatura en Negocios Digitales · Equipo 6</strong>
+              <strong>Licenciatura en Negocios Digitales · 3GM2</strong>
             </div>
           </div>
 
@@ -105,14 +105,14 @@
             </p>
             <div class="footer-tags">
               <span class="footer-tag">Negocios Digitales</span>
-              <span class="footer-tag">Equipo 6</span>
+              <span class="footer-tag">3GM2</span>
               <span class="footer-tag">N = 185 vacantes</span>
             </div>
           </div>
         </div>
 
         <div class="footer-bottom">
-          <span>© 2026 OLD-LND · Licenciatura en Negocios Digitales · Equipo 6. Proyecto académico.</span>
+          <span>© 2026 OLD-LND · Licenciatura en Negocios Digitales · 3GM2. Proyecto académico.</span>
           <div class="footer-legal" aria-label="Enlaces legales">
             <a href="./privacidad.html">Aviso de Privacidad</a>
             <a href="./terminos.html">Términos de Uso</a>
