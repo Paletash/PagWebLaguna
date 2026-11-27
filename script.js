@@ -590,6 +590,18 @@
 
       form.hidden = true;
       if (formSuccess) formSuccess.hidden = false;
+
+      // Disparo de eventos en Meta Pixel (Escaparate de Talento)
+      if (typeof window.fbq === "function") {
+        window.fbq("track", "Lead", {
+          content_name: "Escaparate de Talento",
+          content_category: sector,
+        });
+        window.fbq("trackCustom", "EscaparateDeTalento", {
+          empresa: empresa,
+          sector: sector,
+        });
+      }
     } catch {
       const mailtoUrl = buildMailtoHref({ nombre, empresa, correo, sector, mensaje });
       if (formError) {

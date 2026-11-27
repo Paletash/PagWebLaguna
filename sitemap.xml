@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://old-lnd-2026.example/index.html</loc>
+    <loc>https://old-lnd.com.mx/index.html</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://old-lnd-2026.example/competencias.html</loc>
+    <loc>https://old-lnd.com.mx/competencias.html</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://old-lnd-2026.example/sectores.html</loc>
+    <loc>https://old-lnd.com.mx/sectores.html</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://old-lnd-2026.example/resultados.html</loc>
+    <loc>https://old-lnd.com.mx/resultados.html</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://old-lnd-2026.example/estrategia.html</loc>
+    <loc>https://old-lnd.com.mx/estrategia.html</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://old-lnd-2026.example/metodologia.html</loc>
+    <loc>https://old-lnd.com.mx/metodologia.html</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://old-lnd-2026.example/privacidad.html</loc>
+    <loc>https://old-lnd.com.mx/privacidad.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://old-lnd-2026.example/terminos.html</loc>
+    <loc>https://old-lnd.com.mx/terminos.html</loc>
     <priority>0.4</priority>
   </url>
 </urlset>

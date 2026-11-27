@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# Reemplaza el dominio por tu URL pública al desplegar
-Sitemap: https://old-lnd-2026.example/sitemap.xml
+Sitemap: https://old-lnd.com.mx/sitemap.xml

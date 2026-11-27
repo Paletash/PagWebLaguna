@@ -19,8 +19,8 @@
   # Desactivar acceso a hardware y APIs no requeridas por el observatorio
   Permissions-Policy: accelerometer=(), autoplay=(), camera=(), encrypted-media=(), display-capture=(), geolocation=(), gyroscope=(), interest-cohort=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()
 
-  # Content Security Policy (CSP) adaptada a Google Fonts y formulario FormSubmit
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co mailto:; frame-ancestors 'none'; object-src 'none'; base-uri 'self';
+  # Content Security Policy (CSP) adaptada a Google Fonts, Meta Pixel y formulario FormSubmit
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: https://www.facebook.com; connect-src 'self' https://formsubmit.co https://connect.facebook.net; form-action 'self' https://formsubmit.co mailto:; frame-ancestors 'none'; object-src 'none'; base-uri 'self';
 
   # Protección legacy para navegadores antiguos
   X-XSS-Protection: 1; mode=block
