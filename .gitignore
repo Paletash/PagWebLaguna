@@ -9,6 +9,7 @@ _agent/
 *.xls
 *.csv
 BASE_MAESTRA_CONSOLIDADA_185_VACANTES.xlsx
+GUIA_DESPLIEGUE_Y_SEGURIDAD.md
 
 # Archivos de sistema operativo y temporales
 .DS_Store
