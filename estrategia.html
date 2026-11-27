@@ -490,6 +490,12 @@
                   <input type="hidden" name="_template" value="table" />
                   <input type="hidden" name="_captcha" value="false" />
                   <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
+                  
+                  <!-- Trampa señuelo multicapa anti-bots (invisible para humanos, irresistible para scripts) -->
+                  <div class="bot-decoy" aria-hidden="true">
+                    <label for="campo-contacto-url">Por favor deja este campo en blanco</label>
+                    <input id="campo-contacto-url" type="text" name="_website_url" tabindex="-1" autocomplete="off" />
+                  </div>
 
                   <div class="field-row">
                     <div class="field">

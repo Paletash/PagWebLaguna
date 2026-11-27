@@ -4409,6 +4409,18 @@ button {
   border: 0;
 }
 
+/* Señuelo invisible para scripts automatizados de spam */
+.bot-decoy {
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 .lnd-bot-root {
   position: fixed;
   right: 20px;

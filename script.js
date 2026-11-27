@@ -517,6 +517,21 @@
   const submitBtn = document.getElementById("submit-btn");
   const submitBtnText = submitBtn?.querySelector(".submit-btn-text");
 
+  /* =========================================================
+     BLINDAJE DE SEGURIDAD DEL FORMULARIO (ANTI-BOT & ANTI-FLOOD)
+     ========================================================= */
+  const FORM_COOLDOWN_MS = 45 * 1000; // 45 segundos de enfriamiento entre envíos
+  const MIN_HUMAN_FILL_TIME_MS = 2200; // Mínimo 2.2 segundos para llenar el formulario
+  const STORAGE_LAST_SUBMIT_KEY = "old_lnd_form_last_submit";
+  let isFormSubmitting = false;
+  let formInteractionStart = null;
+
+  const markInteractionStart = () => {
+    if (!formInteractionStart) formInteractionStart = Date.now();
+  };
+  form?.addEventListener("focusin", markInteractionStart, { once: true });
+  form?.addEventListener("input", markInteractionStart, { once: true });
+
   function buildMailtoHref({ nombre, empresa, correo, sector, mensaje }) {
     const subject = `Vinculación OLD-LND 2026 — ${empresa}`;
     const body = [
@@ -536,6 +551,26 @@
 
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    // 1. Evitar envíos simultáneos o clics repetidos
+    if (isFormSubmitting) return;
+
+    // 2. Control de Enfriamiento (Anti-Flood / Rate Limiting en cliente)
+    try {
+      const lastSubmitTime = Number(window.localStorage?.getItem(STORAGE_LAST_SUBMIT_KEY) || 0);
+      const elapsedSinceLast = Date.now() - lastSubmitTime;
+      if (elapsedSinceLast < FORM_COOLDOWN_MS) {
+        const remainingSeconds = Math.ceil((FORM_COOLDOWN_MS - elapsedSinceLast) / 1000);
+        if (formError) {
+          formError.textContent = `Has enviado una solicitud recientemente. Por seguridad y para evitar saturación del buzón, espera ${remainingSeconds} segundos antes de enviar otra.`;
+          formError.hidden = false;
+        }
+        return;
+      }
+    } catch {
+      // Ignora si localStorage no está habilitado
+    }
+
     if (!form.checkValidity()) {
       const firstInvalid = form.querySelector(":invalid");
       if (formError) {
@@ -554,10 +589,30 @@
     const correo = form.querySelector("#correo")?.value.trim() || "";
     const sector = form.querySelector("#sector")?.value || "";
     const mensaje = form.querySelector("#mensaje")?.value.trim() || "";
-    const honey = form.querySelector('input[name="_honey"]')?.value || "";
+    const honey1 = form.querySelector('input[name="_honey"]')?.value || "";
+    const honey2 = form.querySelector('input[name="_website_url"]')?.value || "";
 
-    if (honey) return;
+    // 3. Trampa señuelo anti-bots y detección de scripts instantáneos (< 2.2s)
+    const timeSpentFilling = formInteractionStart ? Date.now() - formInteractionStart : 0;
+    const isAutomatedBot = Boolean(honey1 || honey2 || timeSpentFilling < MIN_HUMAN_FILL_TIME_MS);
 
+    if (isAutomatedBot) {
+      // Técnica de finta silenciosa (tarpit): simula éxito sin enviar spam a FormSubmit
+      form.hidden = true;
+      if (formSuccess) formSuccess.hidden = false;
+      return;
+    }
+
+    // 4. Filtro de patrones comunes de spam masivo en el nombre
+    if (/(https?:\/\/|www\.|\.ru\b|\.cn\b|telegram|crypto|casino)/i.test(nombre)) {
+      if (formError) {
+        formError.textContent = "Por favor ingresa un nombre y datos válidos de contacto corporativo.";
+        formError.hidden = false;
+      }
+      return;
+    }
+
+    isFormSubmitting = true;
     if (formError) formError.hidden = true;
     if (submitBtn) submitBtn.disabled = true;
     if (submitBtnText) submitBtnText.textContent = "Enviando solicitud...";
@@ -588,6 +643,11 @@
         throw new Error(`HTTP ${response.status}`);
       }
 
+      // Registrar marca de tiempo del envío exitoso para enfriamiento
+      try {
+        window.localStorage?.setItem(STORAGE_LAST_SUBMIT_KEY, String(Date.now()));
+      } catch {}
+
       form.hidden = true;
       if (formSuccess) formSuccess.hidden = false;
 
@@ -609,6 +669,7 @@
         formError.hidden = false;
       }
     } finally {
+      isFormSubmitting = false;
       if (submitBtn) submitBtn.disabled = false;
       if (submitBtnText) submitBtnText.textContent = "Conectar con talento";
     }
